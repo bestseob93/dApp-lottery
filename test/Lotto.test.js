@@ -61,4 +61,16 @@ describe('Lotto Contract', () => {
     assert.equal(accounts[2], players[2]);
     assert.equal(3, players.length); // 3개의 레코드가 있는지 확인하는 테스트
   });
+
+  it('requires a minimum amount of ether to enter', async () => {
+    try {
+      await lotto.methods.enter().send({
+        from: accounts[0],
+        value: 0 // 200 wei
+      });
+      assert(false);
+    } catch (e) {
+      assert.ok(e);
+    }
+  });
 });
