@@ -73,4 +73,32 @@ describe('Lotto Contract', () => {
       assert.ok(e);
     }
   });
+
+  it('only manager can call pickWinner', async () => {
+    try {
+      await lotto.methods.pickWinner().send({
+        from: accounts[1]
+      });
+      assert(false); // ?
+    } catch (e) {
+      assert(e);
+    }
+  });
+
+  it('send money to the winner and resets the player array', async () => {
+    await lotto.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei('2', 'ether')
+    });
+
+    const initialBalance = await web3.eth.getBalance(accounts[0]);
+
+    await lotto.methods.pickWinner().send({ from: accounts[0] });
+
+    const finalBalance = await web3.eth.getBalance(accounts[0]);
+
+    const difference = finalBalance - initialBalance;
+    console.log(finalBalance - initialBalance);
+    assert(difference > web3.utils.toWei('1.8', 'ether'));
+  });
 });
