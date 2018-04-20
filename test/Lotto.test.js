@@ -16,3 +16,23 @@ beforeEach(async () => {
     .deploy({ data: bytecode })
     .send({ from: accounts[0], gas: '1000000' });
 });
+
+describe('Lotto Contract', () => {
+  it('deploys a contract', () => {
+    assert.ok(lotto.options.address);
+  });
+
+  it('allows one account to enter', async () => {
+    await lotto.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei('0.02', 'ether')
+    });
+
+    const players = await lotto.methods.getPlayer().call({
+      from: accounts[0]
+    });
+
+    assert.equal(accounts[0], players[0]); // 올바른 주소가 저장됐는지 확인하는 테스트
+    assert.equal(1, players.length); // 1개의 레코드만 있는지 확인하는 테스트
+  });
+});
